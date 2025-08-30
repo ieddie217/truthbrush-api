@@ -1,6 +1,6 @@
 # Truthbrush API Server
 
-A professional FastAPI server that exposes Truth Social data via the truthbrush package.
+A professional FastAPI server that exposes Truth Social data via the truthbrush package. 
 
 ## Project Structure
 
