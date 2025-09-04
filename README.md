@@ -54,30 +54,83 @@ truthbrush-api/
 
 ## Authentication
 
-**All endpoints require HTTP Basic Authentication.**
+**All endpoints require JWT Bearer Authentication.**
 
-You must provide your API credentials with every request:
+The API uses JWT (JSON Web Token) authentication. You must first obtain a token, then include it in all subsequent requests.
 
-### Using curl:
+### Step 1: Get JWT Token
 
+**Login via OAuth2 form (recommended):**
 ```bash
-curl -u your_api_username:your_api_password "http://localhost:8000/statuses?username=realDonaldTrump&created_after=2025-07-23"
+curl -X POST "http://localhost:8000/auth/token" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "username=your_api_username&password=your_api_password"
 ```
 
-### Using Postman:
+**Login via JSON:**
+```bash
+curl -X POST "http://localhost:8000/auth/login" \
+     -H "Content-Type: application/json" \
+     -d '{"username": "your_api_username", "password": "your_api_password"}'
+```
 
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 1800
+}
+```
+
+### Step 2: Use JWT Token in Requests
+
+**Using curl:**
+```bash
+curl -H "Authorization: Bearer your_jwt_token" "http://localhost:8000/statuses?username=realDonaldTrump&created_after=2025-07-23"
+```
+
+**Using Postman:**
 1. Go to the "Authorization" tab
-2. Type: Basic Auth
-3. Enter your API_USERNAME and API_PASSWORD
+2. Type: Bearer Token
+3. Enter your JWT token
 
 ### Default credentials (if not set in .env):
 
 - Username: `admin`
 - Password: `password`
 
-**⚠️ Security Note:** Change these defaults in your `.env` file for production use!
+**⚠️ Security Notes:** 
+- Change these defaults in your `.env` file for production use!
+- JWT tokens expire after 30 minutes - you'll need to get a new token when it expires
 
 ## API Endpoints
+
+### Authentication Endpoints
+
+#### Get JWT Token (OAuth2 Form)
+```
+POST /auth/token
+```
+**Content-Type:** `application/x-www-form-urlencoded`
+
+**Parameters:**
+- `username`: Your API username
+- `password`: Your API password
+
+#### Get JWT Token (JSON)
+```
+POST /auth/login
+```
+**Content-Type:** `application/json`
+
+**Body:**
+```json
+{
+  "username": "your_api_username",
+  "password": "your_api_password"
+}
+```
 
 ### Get User Statuses
 
@@ -95,7 +148,7 @@ GET /statuses?username={username}&created_after={date}&replies={bool}&pinned={bo
 **Example:**
 
 ```bash
-curl -u your_api_username:your_api_password "http://localhost:8000/statuses?username=realDonaldTrump&created_after=2025-07-23"
+curl -H "Authorization: Bearer your_jwt_token" "http://localhost:8000/statuses?username=realDonaldTrump&created_after=2025-07-23"
 ```
 
 ### Health Check
@@ -110,13 +163,14 @@ GET /health
 GET /docs
 ```
 
-Interactive API documentation (Swagger UI) - requires authentication
+Interactive API documentation (Swagger UI) - requires JWT Bearer authentication
 
 ## Features
 
 - **Professional Structure**: Clean separation of concerns with proper layering
 - **Configuration Management**: Centralized settings via environment variables
-- **Authentication**: HTTP Basic Auth for all endpoints
+- **JWT Authentication**: Bearer token authentication for all endpoints with 30-minute expiration
+- **Dual Login Methods**: OAuth2 form-based and JSON-based authentication endpoints
 - **Logging**: Both console and file logging with configurable levels
 - **Error Handling**: Proper HTTP status codes and error messages
 - **CORS Support**: Cross-origin requests enabled
@@ -148,7 +202,9 @@ Each API call is logged with client IP, authenticated user, and parameters for m
 
 ## Security
 
-- All endpoints require HTTP Basic Authentication
+- All endpoints require JWT Bearer Authentication
+- JWT tokens expire after 30 minutes for enhanced security
 - Credentials are stored in environment variables (not in code)
 - Secure credential comparison using `secrets.compare_digest()`
+- JWT tokens are signed with HS256 algorithm
 - Proper HTTP status codes for authentication failures
