@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Repos\\truthbrush\\app/**)",
+      "Read(/C:\\Repos\\truthbrush\\app\\core/**)",
+      "Read(/C:\\Repos\\truthbrush/**)",
+      "Read(/C:\\Repos\\truthbrush\\app\\core/**)",
+      "Read(/C:\\Repos\\truthbrush\\app\\core/**)",
+      "Bash(curl:*)",
+      "Read(/C:\\Repos\\truthbrush\\app\\api\\endpoints/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

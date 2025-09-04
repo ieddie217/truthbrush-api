@@ -1,3 +1,6 @@
 fastapi
 uvicorn
-truthbrush 
+truthbrush
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart 

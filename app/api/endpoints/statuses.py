@@ -4,7 +4,7 @@ from typing import Optional
 import logging
 
 from ...services.truthbrush_service import TruthbrushService
-from ...core.auth import verify_basic_auth
+from ...core.auth import verify_token
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -16,12 +16,12 @@ def get_statuses(
     replies: bool = Query(False, description="Include replies? (default: False)"),
     pinned: bool = Query(False, description="Only pinned posts? (default: False)"),
     request: Request = None,
-    auth_user: str = Depends(verify_basic_auth),
+    auth_user: str = Depends(verify_token),
 ):
     """
     Returns statuses for a given username, optionally filtered by created_after (ISO date string).
     Output is a JSON array, each item matching the structure of data.json.
-    Requires HTTP Basic Authentication.
+    Requires JWT Bearer Authentication.
     """
     # Log the request
     client_ip = request.client.host if request else 'unknown'
