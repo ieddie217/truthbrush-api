@@ -3,7 +3,7 @@
 A professional FastAPI server that exposes Truth Social data via the truthbrush package. 
 
 ## Project Structure
-
+ 
 ```
 truthbrush-api/
 ├── app/                    # Main application package
